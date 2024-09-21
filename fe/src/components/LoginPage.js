@@ -23,9 +23,10 @@ const LoginPage = ({ setIsAuthenticated }) => {
       if (response.ok) {
         // Assuming the backend returns a token for authentication
         setIsAuthenticated(true);
+        localStorage.setItem('token', data.token); // Store the token
 
-        // Store the token in localStorage (or cookies) if needed
-        localStorage.setItem('token', data.token);
+        // Optionally, store the authenticated state
+        localStorage.setItem('isAuthenticated', 'true');
 
         // Redirect to the homepage
         navigate('/');
@@ -45,7 +46,7 @@ const LoginPage = ({ setIsAuthenticated }) => {
       </Typography>
       <TextField
         fullWidth
-        label="Email"
+        label="Username"
         variant="outlined"
         value={username}
         onChange={(e) => setUsername(e.target.value)}

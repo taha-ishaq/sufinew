@@ -5,17 +5,35 @@ import {
   Typography,
   Box,
   IconButton,
+  Select,
+  MenuItem,
+  FormControl,
+  InputLabel,
+  Grid,
 } from '@mui/material';
 import AddIcon from '@mui/icons-material/Add';
 import RemoveIcon from '@mui/icons-material/Remove';
 import axios from 'axios';
+
+const validTags = [
+  'men',
+  'woman',
+  'bridal',
+  'partywear',
+  'malestitch',
+  'femalestitch',
+  'maleunstitch',
+  'femaleunstitch',
+  'partywearm',
+  'partywearw',
+];
 
 const ProductForm = () => {
   const [error, setError] = useState('');
   const [formData, setFormData] = useState({
     name: '',
     price: '',
-    tags: '',
+    tags: [],
     mainImage: null,
     secondaryImages: [],
     size: '',
@@ -25,17 +43,31 @@ const ProductForm = () => {
     details: [''],
     description: '',
     stock: '',
-    productCode: '', // Add productCode to the formData state
+    productCode: '',
   });
 
   const handleChange = (e) => {
     const { name, value, files } = e.target;
+
     if (name === 'mainImage') {
       setFormData({ ...formData, mainImage: files[0] });
     } else if (name === 'secondaryImages') {
       setFormData({ ...formData, secondaryImages: Array.from(files) });
     } else if (name === 'colors') {
       setFormData({ ...formData, colors: value.split(',').map(color => color.trim()) });
+    } else if (name === 'tags') {
+      const tagsArray = value.split(',').map(tag => tag.trim().toLowerCase());
+      const invalidTags = tagsArray.filter(tag => !validTags.includes(tag));
+
+      if (invalidTags.length > 0) {
+        setError(`Invalid tags: ${invalidTags.join(', ')}. Please use only: ${validTags.join(', ')}.`);
+      } else if (tagsArray.includes('woman') && tagsArray.includes('men')) {
+        setError("You cannot include 'men' if 'woman' is present.");
+      } else {
+        setError('');
+      }
+
+      setFormData({ ...formData, tags: tagsArray });
     } else {
       setFormData({ ...formData, [name]: value });
     }
@@ -61,7 +93,6 @@ const ProductForm = () => {
     e.preventDefault();
     const form = new FormData();
 
-    // Append all fields to FormData
     for (const key in formData) {
       if (Array.isArray(formData[key])) {
         formData[key].forEach((item) => form.append(key, item));
@@ -77,12 +108,11 @@ const ProductForm = () => {
         },
       });
       console.log('Product created:', response.data);
-      
       // Reset form data
       setFormData({
         name: '',
         price: '',
-        tags: '',
+        tags: [],
         mainImage: null,
         secondaryImages: [],
         size: '',
@@ -92,17 +122,13 @@ const ProductForm = () => {
         details: [''],
         description: '',
         stock: '',
-        productCode: '', // Reset productCode
+        productCode: '',
       });
-      setError(''); // Clear any previous error message
+      setError('');
     } catch (error) {
-      console.error('Error occurred during submission:', error);
+      console.error('Error during submission:', error);
       if (error.response) {
-        console.error('Response data:', error.response.data);
         setError(error.response.data.message || 'Error occurred. Please try again.');
-      } else if (error.request) {
-        console.error('Request data:', error.request);
-        setError('No response from server. Please check your connection.');
       } else {
         setError('Error: ' + error.message);
       }
@@ -112,48 +138,108 @@ const ProductForm = () => {
   return (
     <Box component="form" onSubmit={handleSubmit} sx={{ padding: 2 }}>
       <Typography variant="h4" gutterBottom>Create Product</Typography>
-      {error && <Typography color="error">{error}</Typography>} {/* Display error message */}
-      <TextField name="productCode" label="Product Code" onChange={handleChange} required fullWidth /> {/* New field for Product Code */}
-      <TextField name="name" label="Name" onChange={handleChange} required fullWidth />
-      <TextField name="price" label="Price" type="number" onChange={handleChange} required fullWidth />
-      <TextField name="tags" label="Tags (comma-separated)" onChange={handleChange} fullWidth />
-      
-      <input type="file" name="mainImage" onChange={handleChange} required />
-      <input type="file" name="secondaryImages" multiple onChange={handleChange} />
+      {error && <Typography color="error">{error}</Typography>}
 
-      <TextField name="size" label="Size" onChange={handleChange} fullWidth />
-      <TextField name="length" label="Length" type="number" onChange={handleChange} fullWidth />
-      <TextField name="fabric" label="Fabric" onChange={handleChange} required fullWidth />
+      <Grid container spacing={2}>
+        <Grid item xs={12} sm={6}>
+          <FormControl fullWidth required>
+            <InputLabel>Product Type</InputLabel>
+            <Select name="productType" onChange={handleChange} required>
+              <MenuItem value="woman">Woman</MenuItem>
+              <MenuItem value="man">Man</MenuItem>
+              <MenuItem value="bridal">Bridal</MenuItem>
+            </Select>
+          </FormControl>
+        </Grid>
 
-      <TextField
-        name="colors"
-        label="Colors (comma-separated)"
-        onChange={handleChange}
-        required
-        fullWidth
-      />
+        <Grid item xs={12} sm={6}>
+          <TextField name="productCode" label="Product Code" onChange={handleChange} required fullWidth />
+        </Grid>
 
-      <Typography variant="h6">Details</Typography>
-      {formData.details.map((detail, index) => (
-        <Box key={index} sx={{ display: 'flex', alignItems: 'center', marginBottom: 1 }}>
+        <Grid item xs={12} sm={6}>
+          <TextField name="name" label="Name" onChange={handleChange} required fullWidth />
+        </Grid>
+
+        <Grid item xs={12} sm={6}>
+          <TextField name="price" label="Price" type="number" onChange={handleChange} required fullWidth />
+        </Grid>
+
+        <Grid item xs={12} sm={6}>
           <TextField
-            value={detail}
-            onChange={(e) => handleDetailChange(index, e.target.value)}
+            name="tags"
+            label="Tags (comma-separated)"
+            onChange={handleChange}
+            value={formData.tags.join(', ')}
+            required
+            fullWidth
+            helperText={`Valid tags: ${validTags.join(', ')}`}
+          />
+        </Grid>
+
+        <Grid item xs={12} sm={6}>
+          <TextField name="size" label="Size" onChange={handleChange} fullWidth />
+        </Grid>
+
+        <Grid item xs={12} sm={6}>
+          <TextField name="length" label="Length" type="number" onChange={handleChange} fullWidth />
+        </Grid>
+
+        <Grid item xs={12} sm={6}>
+          <TextField name="fabric" label="Fabric" onChange={handleChange} required fullWidth />
+        </Grid>
+
+        <Grid item xs={12} sm={6}>
+          <TextField
+            name="colors"
+            label="Colors (comma-separated)"
+            onChange={handleChange}
             required
             fullWidth
           />
-          <IconButton onClick={() => removeDetail(index)}>
-            <RemoveIcon />
-          </IconButton>
-        </Box>
-      ))}
-      <IconButton onClick={addDetail}>
-        <AddIcon />
-      </IconButton>
+        </Grid>
 
-      <TextField name="description" label="Description" onChange={handleChange} required fullWidth />
-      <TextField name="stock" label="Stock" type="number" onChange={handleChange} required fullWidth />
-      <Button type="submit" variant="contained" color="primary">Submit</Button>
+        <Grid item xs={12}>
+          <Typography variant="h6">Details</Typography>
+          {formData.details.map((detail, index) => (
+            <Box key={index} sx={{ display: 'flex', alignItems: 'center', marginBottom: 1 }}>
+              <TextField
+                value={detail}
+                onChange={(e) => handleDetailChange(index, e.target.value)}
+                required
+                fullWidth
+              />
+              <IconButton onClick={() => removeDetail(index)}>
+                <RemoveIcon />
+              </IconButton>
+            </Box>
+          ))}
+          <IconButton onClick={addDetail}>
+            <AddIcon />
+          </IconButton>
+        </Grid>
+
+        <Grid item xs={12}>
+          <TextField name="description" label="Description" onChange={handleChange} required fullWidth />
+        </Grid>
+
+        <Grid item xs={12} sm={6}>
+          <TextField name="stock" label="Stock" type="number" onChange={handleChange} required fullWidth />
+        </Grid>
+
+        {/* File Inputs at the Bottom */}
+        <Grid item xs={12}>
+          <Typography variant="h6">Upload Images</Typography>
+          <input type="file" name="mainImage" onChange={handleChange} required />
+        </Grid>
+
+        <Grid item xs={12}>
+          <input type="file" name="secondaryImages" multiple onChange={handleChange} />
+        </Grid>
+
+        <Grid item xs={12} sm={6}>
+          <Button type="submit" variant="contained" color="primary" fullWidth>Submit</Button>
+        </Grid>
+      </Grid>
     </Box>
   );
 };

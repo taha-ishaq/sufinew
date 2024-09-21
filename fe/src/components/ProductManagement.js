@@ -1,6 +1,33 @@
 import React, { useEffect, useState } from 'react';
-import { Grid, Card, CardContent, Typography, CardMedia, Button, Dialog, DialogActions, DialogContent, DialogTitle, TextField } from '@mui/material';
+import {
+  Grid,
+  Card,
+  CardContent,
+  Typography,
+  CardMedia,
+  Button,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogTitle,
+  TextField,
+  Select,
+  MenuItem,
+  InputLabel,
+  FormControl,
+  Chip,
+} from '@mui/material';
 import axios from 'axios';
+
+const tagOptions = [
+  { value: 'woman', label: 'Woman' },
+  { value: 'man', label: 'Man' },
+  { value: 'bridal', label: 'Bridal' },
+  { value: 'partywear', label: 'Party Wear' },
+  { value: 'stitch', label: 'Stitch' },
+  { value: 'unstitch', label: 'Unstitch' },
+  { value: 'woman,stitch', label: 'Woman,Stitch' },
+];
 
 const ProductManagement = () => {
   const [products, setProducts] = useState([]);
@@ -54,6 +81,11 @@ const ProductManagement = () => {
       setError('Failed to update product.');
       console.error(err);
     }
+  };
+
+  const handleTagChange = (event) => {
+    const value = event.target.value;
+    setEditingProduct({ ...editingProduct, tags: value });
   };
 
   if (loading) return <Typography>Loading...</Typography>;
@@ -135,7 +167,28 @@ const ProductManagement = () => {
             value={editingProduct?.description || ''}
             onChange={(e) => setEditingProduct({ ...editingProduct, description: e.target.value })}
           />
-          {/* Add more fields as necessary */}
+          {/* Tag Selection */}
+          <FormControl fullWidth margin="dense">
+            <InputLabel>Tags</InputLabel>
+            <Select
+              multiple
+              value={editingProduct?.tags || []}
+              onChange={handleTagChange}
+              renderValue={(selected) => (
+                <div>
+                  {selected.map((value) => (
+                    <Chip key={value} label={tagOptions.find(tag => tag.value === value)?.label} />
+                  ))}
+                </div>
+              )}
+            >
+              {tagOptions.map((tag) => (
+                <MenuItem key={tag.value} value={tag.value}>
+                  {tag.label}
+                </MenuItem>
+              ))}
+            </Select>
+          </FormControl>
         </DialogContent>
         <DialogActions>
           <Button onClick={handleEditClose} color="primary">

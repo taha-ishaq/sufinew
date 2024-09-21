@@ -28,9 +28,9 @@ const productRepository = {
           name: 1,
           price: 1,
           tags: 1,
-          productCode: 1, // Include productCode in the projection
+          productCode: 1,
           mainImage: 1,
-          secondaryImages: { $slice: ['$secondaryImages', 2] }, // Limit to 2 secondary images
+          secondaryImages: { $slice: ['$secondaryImages', 2] },
           fabric: 1,
           color: 1,
           details: 1,
@@ -76,9 +76,31 @@ const productRepository = {
     return await Product.findByIdAndDelete(id);
   },
 
-  // Get products by tags
+  // Get products by tags with aggregation
   getProductsByTags: async (tags) => {
-    return await Product.find({ tags: { $in: tags } });
+    return await Product.aggregate([
+      {
+        $match: {
+          tags: { $in: tags }
+        }
+      },
+      {
+        $project: {
+          name: 1,
+          price: 1,
+          tags: 1,
+          productCode: 1,
+          mainImage: 1,
+          secondaryImages: { $slice: ['$secondaryImages', 2] },
+          fabric: 1,
+          color: 1,
+          details: 1,
+          description: 1,
+          stock: 1,
+          createdAt: 1,
+        },
+      },
+    ]);
   },
 
   // Get products sorted by price (highest to lowest)

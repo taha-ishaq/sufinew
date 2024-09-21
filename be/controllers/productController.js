@@ -94,7 +94,6 @@ const productController = {
     }
   },
 
-
   // Get product by ID
   getProductById: async (req, res) => {
     try {
@@ -149,7 +148,258 @@ const productController = {
         console.error(error);
         res.status(500).json({ message: 'Error fetching products', error });
     }
-},
+  },
+  getProductsByTwoTags: async (req, res) => {
+    try {
+      const { tag1, tag2 } = req.query;
+      if (!tag1 || !tag2) {
+        return res.status(400).json({ message: 'Both tags are required' });
+      }
+      const products = await productRepository.getProductsByTags([tag1, tag2]);
+      res.status(200).json(products);
+    } catch (error) {
+      console.error(error);
+      res.status(500).json({ message: 'Error fetching products', error });
+    }
+  },
+  getProductsByThreeTags: async (req, res) => {
+    try {
+      const { tag1, tag2 , tag3 } = req.query;
+      if (!tag1 || !tag2 || !tag3) {
+        return res.status(400).json({ message: 'Both tags are required' });
+      }
+      const products = await productRepository.getProductsByTags([tag1, tag2]);
+      res.status(200).json(products);
+    } catch (error) {
+      console.error(error);
+      res.status(500).json({ message: 'Error fetching products', error });
+    }
+  },
+  // Woman-related products
+  getWomanProducts: async (req, res) => {
+    try {
+      const products = await productRepository.getProductsByTags(['woman']);
+      res.status(200).json(products);
+    } catch (error) {
+      console.error(error);
+      res.status(500).json({ message: 'Error fetching woman products', error });
+    }
+  },
+
+  getWomanAndStitchProducts: async (req, res) => {
+    try {
+      const products = await productRepository.getProductsByTags(['woman', 'stitch']);
+      res.status(200).json(products);
+    } catch (error) {
+      console.error(error);
+      res.status(500).json({ message: 'Error fetching woman and stitch products', error });
+    }
+  },
+
+  getWomanAndUnstitchProducts: async (req, res) => {
+    try {
+      const products = await productRepository.getProductsByTags(['woman', 'unstitch']);
+      res.status(200).json(products);
+    } catch (error) {
+      console.error(error);
+      res.status(500).json({ message: 'Error fetching woman and unstitch products', error });
+    }
+  },
+
+  // Man-related products
+  getManProducts: async (req, res) => {
+    try {
+      const products = await productRepository.getProductsByTags(['man']);
+      res.status(200).json(products);
+    } catch (error) {
+      console.error(error);
+      res.status(500).json({ message: 'Error fetching man products', error });
+    }
+  },
+
+  getManAndStitchProducts: async (req, res) => {
+    try {
+      const products = await productRepository.getProductsByTags(['man', 'stitch']);
+      res.status(200).json(products);
+    } catch (error) {
+      console.error(error);
+      res.status(500).json({ message: 'Error fetching man and stitch products', error });
+    }
+  },
+
+  getManAndUnstitchProducts: async (req, res) => {
+    try {
+      const products = await productRepository.getProductsByTags(['man', 'unstitch']);
+      res.status(200).json(products);
+    } catch (error) {
+      console.error(error);
+      res.status(500).json({ message: 'Error fetching man and unstitch products', error });
+    }
+  },
+
+  // Bridal-related products
+  getBridalProducts: async (req, res) => {
+    try {
+      const products = await productRepository.getProductsByTags(['bridal']);
+      res.status(200).json(products);
+    } catch (error) {
+      console.error(error);
+      res.status(500).json({ message: 'Error fetching bridal products', error });
+    }
+  },
+
+  getBridalAndPartyWearProducts: async (req, res) => {
+    try {
+      const products = await productRepository.getProductsByTags(['bridal', 'party wear']);
+      res.status(200).json(products);
+    } catch (error) {
+      console.error(error);
+      res.status(500).json({ message: 'Error fetching bridal and party wear products', error });
+    }
+  },
+
+  getBridalAndManProducts: async (req, res) => {
+    try {
+      const products = await productRepository.getProductsByTags(['bridal', 'man']);
+      res.status(200).json(products);
+    } catch (error) {
+      console.error(error);
+      res.status(500).json({ message: 'Error fetching bridal and man products', error });
+    }
+  },
+  getWomenProductsByThreeTags: async (req, res) => {
+    try {
+      const { tag1, tag2, tag3 } = req.query;
+      if (!tag1 || !tag2 || !tag3) {
+        return res.status(400).json({ message: 'All three tags are required' });
+      }
+      const products = await productRepository.getProductsByTags([tag1, tag2, tag3]);
+      res.status(200).json(products);
+    } catch (error) {
+      console.error(error);
+      res.status(500).json({ message: 'Error fetching products', error });
+    }
+  },
+  
+  // Get products by three tags for men
+  getMenProductsByThreeTags: async (req, res) => {
+    try {
+      const { tag1, tag2, tag3 } = req.query;
+      if (!tag1 || !tag2 || !tag3) {
+        return res.status(400).json({ message: 'All three tags are required' });
+      }
+      const products = await productRepository.getProductsByTags([tag1, tag2, tag3]);
+      res.status(200).json(products);
+    } catch (error) {
+      console.error(error);
+      res.status(500).json({ message: 'Error fetching products', error });
+    }
+  },
+  getManBridalPartywearProducts: async (req, res) => {
+    try {
+      const products = await productRepository.getProductsByTags(['man', 'bridal', 'partywear']);
+      res.status(200).json(products);
+    } catch (error) {
+      console.error(error);
+      res.status(500).json({ message: 'Error fetching bridal and man products', error });
+    }
+  },
+  
+  // Get woman products related to bridal and party wear
+  getWomanBridalPartywearProducts: async (req, res) => {
+    try {
+      const products = await productRepository.getProductsByTags(['woman', 'bridal', 'partywear']);
+      res.status(200).json(products);
+    } catch (error) {
+      console.error(error);
+      res.status(500).json({ message: 'Error fetching bridal and woman products', error });
+    }
+  },
+  getProductsByyTags: async (req, res) => {
+    try {
+      const { tags } = req.query; // Expecting a comma-separated string of tags
+      if (!tags) {
+        return res.status(400).json({ message: 'Tags are required' });
+      }
+  
+      const tagsArray = tags.split(','); // Convert the string to an array
+  
+      const products = await Product.aggregate([
+        {
+          $match: {
+            $or: [
+              { tags: { $all: ['woman'] }, tags: { $nin: ['man'] } },
+              { tags: { $all: ['man'] }, tags: { $nin: ['woman'] } },
+              { tags: { $all: tagsArray } }
+            ]
+          }
+        },
+        {
+          $group: {
+            _id: null,
+            totalProducts: { $sum: 1 },
+            products: { $push: "$$ROOT" } // Push all matching products into an array
+          }
+        },
+        {
+          $project: {
+            _id: 0,
+            totalProducts: 1,
+            products: 1
+          }
+        }
+      ]);
+  
+      if (products.length === 0) {
+        return res.status(404).json({ message: 'No products found with the specified tags' });
+      }
+  
+      res.status(200).json(products[0]); // Return the aggregated result
+    } catch (error) {
+      console.error(error);
+      res.status(500).json({ message: 'Error fetching products by tags', error });
+    }
+  },
+  bulkUploadProducts: async (req, res) => {
+    try {
+      const results = [];
+      fs.createReadStream(req.file.path)
+        .pipe(csv())
+        .on('data', (data) => results.push(data))
+        .on('end', async () => {
+          const savedProducts = [];
+          for (const productData of results) {
+            const mainImageUrl = productData.mainImage; // Process URL or path
+            const secondaryImageUrls = productData.secondaryImages.split(','); // Split into an array
+            
+            const newProduct = new Product({
+              name: productData.name,
+              description: productData.description,
+              price: parseFloat(productData.price),
+              mainImage: mainImageUrl,
+              secondaryImages: secondaryImageUrls,
+              tags: productData.tags.split(','),
+              details: productData.details,
+              color: productData.color,
+              stock: parseInt(productData.stock),
+              fabric: productData.fabric,
+              size: productData.size,
+              length: parseFloat(productData.length),
+              productCode: productData.productCode // Add productCode here
+            });
+  
+            const savedProduct = await newProduct.save();
+            savedProducts.push(savedProduct);
+          }
+          res.status(201).json({ message: 'Products uploaded successfully', products: savedProducts });
+        });
+    } catch (error) {
+      console.error('Error in bulkUploadProducts:', error);
+      res.status(500).json({ message: 'Internal server error', error: error.message });
+    }
+  },
+  
+
 };
 
 module.exports = productController;
