@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Box, IconButton, Typography, Button } from '@mui/material';
+import { Box, IconButton, Typography, Button,useTheme,useMediaQuery } from '@mui/material';
 import { ArrowBack, ArrowForward } from '@mui/icons-material';
 import { useNavigate } from 'react-router-dom';
 
@@ -11,6 +11,8 @@ const images = [
 ];
 
 const Homepage = () => {
+  const theme = useTheme();
+  const isSmallScreen = useMediaQuery(theme.breakpoints.down('sm'));
   const [currentIndex, setCurrentIndex] = useState(0);
   const navigate = useNavigate();
 
@@ -77,18 +79,19 @@ const Homepage = () => {
           color: 'white',
         }}
       >
-        <Typography variant="h4" sx={{ mb: 2 }}>
-          SufiyaKhanum
+        <Typography sx={{ mb: 2, fontSize: isSmallScreen ? '35px' : '40px',  fontStyle:'lobster'}}>
+        <b>SafiyaKhanum</b>
         </Typography>
         <Button
-          variant="contained"
-          onClick={() => navigate('/all')}
+          onClick={() => navigate('/collections')}
           sx={{
             backgroundColor: 'black',
             color: 'white',
             '&:hover': {
               backgroundColor: '#333',
             },
+            padding: isSmallScreen ? '12px' : '15px',
+            fontSize: isSmallScreen ? '15px' : '35px'
           }}
         >
           Explore More

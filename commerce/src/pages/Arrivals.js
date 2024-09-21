@@ -1,8 +1,15 @@
 import React, { useState } from 'react';
-import { Box, Typography, Button, Grid, Card, CardMedia, CardContent } from '@mui/material';
+import { Box, Typography, Button, Card, CardMedia, CardContent, useMediaQuery, useTheme, IconButton } from '@mui/material';
+import { Link } from 'react-router-dom'; // Import Link from react-router-dom
+import Slider from 'react-slick';
+import ArrowBackIosNewIcon from '@mui/icons-material/ArrowBackIosNew';
+import ArrowForwardIosIcon from '@mui/icons-material/ArrowForwardIos';
 
 const Arrivals = () => {
-  // Sample static images for each category
+  const theme = useTheme();
+  const isSmallScreen = useMediaQuery(theme.breakpoints.down('sm'));
+  const isLargeScreen = useMediaQuery(theme.breakpoints.up('md'));
+
   const productImages = {
     man: [
       { id: 1, src: `${process.env.PUBLIC_URL}/banner1.jpeg`, name: 'Man Product 1' },
@@ -25,22 +32,38 @@ const Arrivals = () => {
   };
 
   const [selectedTag, setSelectedTag] = useState('man');
+  let sliderRef = null;
 
   const handleTagClick = (tag) => {
     setSelectedTag(tag);
   };
 
+  const settings = {
+    dots: true,
+    infinite: true,
+    speed: 500,
+    slidesToShow: isSmallScreen ? 1 : isLargeScreen ? 2 : 4,
+    slidesToScroll: 1,
+    arrows: false,
+  };
+
+  const handlePrevious = () => {
+    sliderRef.slickPrev();
+  };
+
+  const handleNext = () => {
+    sliderRef.slickNext();
+  };
+
   return (
-    <Box sx={{ textAlign: 'center', padding: '40px' }}>
-      {/* Centered Heading */}
+    <Box sx={{ textAlign: 'center', padding: '20px' }}>
       <Typography
-        variant="h4"
-        sx={{ fontFamily: 'Arial, sans-serif', fontWeight: 'bold', marginBottom: '20px' }}
+     
+        sx={{ fontFamily: 'Arial, sans-serif', fontWeight: 'bold', marginBottom: '20px' , fontSize:isSmallScreen ? '20px' : '45px' }}
       >
         Explore Our Latest Arrivals
       </Typography>
 
-      {/* Buttons for Categories */}
       <Box sx={{ display: 'flex', justifyContent: 'center', gap: '20px', marginBottom: '40px' }}>
         {['man', 'woman', 'bridal'].map((tag) => (
           <Button
@@ -51,6 +74,7 @@ const Arrivals = () => {
               textTransform: 'uppercase',
               color: 'black',
               borderBottom: selectedTag === tag ? '2px solid black' : 'none',
+              fontSize:isSmallScreen ? '20px' : '25px'
             }}
           >
             {tag}
@@ -58,26 +82,43 @@ const Arrivals = () => {
         ))}
       </Box>
 
-      {/* Product Cards */}
-      <Grid container spacing={4} justifyContent="center">
-        {productImages[selectedTag].map((product) => (
-          <Grid item xs={12} sm={6} md={3} key={product.id}>
-            <Card sx={{ borderRadius: '8px', overflow: 'hidden' }}>
-              {/* Product Image */}
-              <CardMedia
-                component="img"
-                image={product.src}
-                alt={product.alt}
-                sx={{ height: '250px', objectFit: 'cover' }}
-              />
-              {/* Product Name with Skin Color Background */}
-              <CardContent sx={{ backgroundColor: '#F1C27D', textAlign: 'center' }}>
-                <Typography variant="h6">{product.name}</Typography>
-              </CardContent>
-            </Card>
-          </Grid>
-        ))}
-      </Grid>
+      <Box sx={{ position: 'relative' }}>
+        <IconButton
+          onClick={handlePrevious}
+          sx={{ position: 'absolute', top: '50%', left: '0', zIndex: 1, transform: 'translateY(-50%)', color: 'black' }}
+        >
+          <ArrowBackIosNewIcon />
+        </IconButton>
+
+        <Slider {...settings} ref={(slider) => (sliderRef = slider)}>
+          {productImages[selectedTag].map((product) => (
+            <Box key={product.id} sx={{ padding: isSmallScreen ? '0 10px' : '0 15px' }}>
+              <Link to="/collections" style={{ textDecoration: 'none' }}> {/* Wrap Card in Link */}
+                <Card sx={{ borderRadius: '8px', overflow: 'hidden', width: '100%', height: '100%' }}>
+                  <CardMedia
+                    component="img"
+                    image={product.src}
+                    alt={product.alt}
+                    sx={{ objectFit: 'cover', height: isSmallScreen ? '200px' : '300px' }}
+                  />
+                  <CardContent sx={{ backgroundColor: '#F1C27D', textAlign: 'center' }}>
+                    <Typography variant="h6" sx={{ fontSize: isSmallScreen ? '1rem' : '1.25rem' }}>
+                      {product.name}
+                    </Typography>
+                  </CardContent>
+                </Card>
+              </Link>
+            </Box>
+          ))}
+        </Slider>
+
+        <IconButton
+          onClick={handleNext}
+          sx={{ position: 'absolute', top: '50%', right: '0', zIndex: 1, transform: 'translateY(-50%)', color: 'black' }}
+        >
+          <ArrowForwardIosIcon />
+        </IconButton>
+      </Box>
     </Box>
   );
 };

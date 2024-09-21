@@ -1,4 +1,4 @@
-import React,{useState} from 'react';
+import React, { useState, useEffect } from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import Navbar from './components/Navbar';
 import NewIn from './pages/Newin';
@@ -9,7 +9,9 @@ import Search from './pages/Search';
 import Cart from './components/Cart';
 import ProductD from './components/ProductD';
 import Checkout from './pages/Checkout';
-// Import your other components/pages
+import Woman from './pages/Woman';
+import Bridal from './pages/Bridal';
+import Man from './pages/Man';
 
 const App = () => {
   const [cartItems, setCartItems] = useState([]);
@@ -30,19 +32,25 @@ const App = () => {
       }
     });
   };
+
+  const cartItemsCount = cartItems.reduce((total, item) => total + item.quantity, 0);
+
   return (
     <Router>
-      <Navbar />
+      <Navbar cartItemsCount={cartItemsCount} />
       <Routes>
-        <Route path='/' element={<All/>}/>
-        <Route path='/search' element={<Search/>}/>
-       <Route path='/all' element={<NewIn addToCart={addToCart}/>}/>
-       <Route path='/product/:id' element={<ProductD addToCart={addToCart}/>}/>
-       <Route path="/cart" element={<Cart />} />
-       <Route path="/checkout" element={<Checkout />} />
+        <Route path='/' element={<All />} />
+        <Route path='/search' element={<Search />} />
+        <Route path='/collections' element={<NewIn addToCart={addToCart} />} />
+        <Route path='/product/:id' element={<ProductD addToCart={addToCart} />} />
+        <Route path='/wedding-formals' element={<Bridal addToCart={addToCart} />} />
+        <Route path='/woman' element={<Woman addToCart={addToCart} />} />
+        <Route path='/man' element={<Man addToCart={addToCart} />} />
+        <Route path="/cart" element={<Cart />} />
+        <Route path="/checkout" element={<Checkout />} />
         {/* Add more routes as needed */}
       </Routes>
-      <Footer/>
+      <Footer />
     </Router>
   );
 };

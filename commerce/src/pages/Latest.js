@@ -7,8 +7,8 @@ const Latest = () => {
 
   return (
     <Box sx={{ textAlign: 'center', padding: '20px' }}>
-      <Typography variant="h4" sx={{ fontFamily: 'Arial, sans-serif', fontWeight: 'bold', marginBottom: '20px' }}>
-        Explore our Latest Collections For You
+      <Typography sx={{ fontFamily: 'Arial, sans-serif', fontWeight: 'bold', marginBottom: '20px',fontSize: isSmallScreen ? '20px' : '40px'}}>
+      Our Latest Collections 
       </Typography>
       <Box
         sx={{
@@ -38,9 +38,11 @@ const Latest = () => {
                 width: isSmallScreen ? '100%' : '48%', // Full width on small screens
                 height: '180px', // Increased height
                 backgroundImage: `url(${process.env.PUBLIC_URL}/latest3.jpeg)`,
+                backgroundPosition: isSmallScreen ? 'center' : 'center top',
                 backgroundSize: 'cover',
                 borderRadius: '8px',
-                marginBottom: isSmallScreen ? '10px' : '0', // Margin for small screens
+                marginBottom: isSmallScreen ? '10px' : '0',
+                marginRight: isSmallScreen ? '10px' : '0', // Margin for small screens
               }}
             />
             <Box
@@ -49,6 +51,7 @@ const Latest = () => {
                 height: '180px', // Increased height
                 backgroundImage: `url(${process.env.PUBLIC_URL}/latest2.jpeg)`,
                 backgroundSize: 'cover',
+              
                 borderRadius: '8px',
               }}
             />
@@ -62,7 +65,8 @@ const Latest = () => {
             height: isSmallScreen ? '300px' : '100', // Adjust height for small screens
             backgroundImage: `url(${process.env.PUBLIC_URL}/latest1.jpeg)`,
             backgroundSize: 'cover',
-            backgroundPosition: isSmallScreen ? 'center' : 'center top', // Focus center for smaller screens
+            backgroundPosition: isSmallScreen ? 'center' : 'center top',
+            // Focus center for smaller screens
             borderRadius: '8px',
           }}
         />

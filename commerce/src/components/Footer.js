@@ -152,8 +152,18 @@ const Footer = () => {
         <RouterLink to="/" style={{ color: 'white' }}>HOME</RouterLink>
         <RouterLink to="/privacy" style={{ color: 'white' }}>PRIVACY</RouterLink>
         <RouterLink to="/terms" style={{ color: 'white' }}>TERMS OF USE</RouterLink>
+      <Box sx={{ marginTop: 4, maxWidth: "290px", height: "220px" }}>
+        <iframe
+          src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d212645.32758412763!2d73.08610799999998!3d33.61611625!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x38dfbfd07891722f%3A0x6059515c3bdb02b6!2sIslamabad%2C%20Islamabad%20Capital%20Territory!5e0!3m2!1sen!2s!4v1726879027576!5m2!1sen!2s"
+          width="100%"
+          height="100%"
+          style={{ border: 0 }}
+          allowFullScreen=""
+          loading="lazy"
+          title="Location Map"
+        />
       </Box>
-
+      </Box>
       {/* Newsletter Section */}
       <Box
         sx={{
@@ -161,10 +171,11 @@ const Footer = () => {
           display: 'flex',
           flexDirection: 'column',
           padding: { xs: 2, sm: 4 },
-          alignItems: { xs: 'center', sm: 'center', md: 'flex-end' },
+          alignItems: { xs: 'center', sm: 'center', md: 'start' },
           '& > h6': {
             marginBottom: 2,
             fontWeight: 'bold',
+            justifyContent:'start'
           },
           '& > p': {
             marginBottom: 2,
@@ -195,6 +206,7 @@ const Footer = () => {
           fullWidth
           value={email}
           onChange={(e) => setEmail(e.target.value)}
+          sx={{bgcolor:'white'}}
         />
         <Button
           className="footer-button"

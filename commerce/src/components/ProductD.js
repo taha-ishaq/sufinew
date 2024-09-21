@@ -51,7 +51,7 @@ const ProductDetail = ({ addToCart }) => {
       const existingItemIndex = cartItems.findIndex(item => item._id === product._id);
 
       if (existingItemIndex > -1) {
-        cartItems[existingItemIndex].quantity += quantity;
+        cartItems[existingItemIndex].quantity = quantity;
         cartItems[existingItemIndex].option = option;
         cartItems[existingItemIndex].size = size;
       } else {
@@ -75,6 +75,7 @@ const ProductDetail = ({ addToCart }) => {
       </Box>
     );
   }
+
   const styles = {
     '@keyframes slideAnimation': {
       '0%': {
@@ -85,6 +86,7 @@ const ProductDetail = ({ addToCart }) => {
       },
     },
   };
+
   return (
     <>
       <Box sx={{ padding: 4 }}>
@@ -108,7 +110,14 @@ const ProductDetail = ({ addToCart }) => {
                     <img
                       src={img}
                       alt={`Secondary ${index}`}
-                      style={{ width: '100%', borderRadius: '8px', maxHeight: '400px', objectFit: 'cover', cursor: 'pointer' }}
+                      style={{
+                        width: '100%',
+                        height: '100%', // Make height equal to width for square shape
+                        borderRadius: '8px',
+                        objectFit: 'cover', // Maintain aspect ratio and cover the area
+                        aspectRatio: '1/1', // Keep a square aspect ratio
+                        cursor: 'pointer',
+                      }}
                       onClick={() => setSelectedImage(img)}
                     />
                   </Grid>
@@ -138,25 +147,25 @@ const ProductDetail = ({ addToCart }) => {
               {product.description}
             </Typography>
             <Typography variant="h6" mt={2}>Details:</Typography>
-<List>
-  {Array.isArray(product.details) ? (
-    product.details.map((detail, index) => (
-      <ListItem key={index}>
-        <ListItemText primary={`• ${detail}`} />
-      </ListItem>
-    ))
-  ) : typeof product.details === 'string' ? (
-    product.details.split('\n').map((detail, index) => (
-      <ListItem key={index}>
-        <ListItemText primary={`• ${detail}`} />
-      </ListItem>
-    ))
-  ) : (
-    <ListItem>
-      <ListItemText primary="No details available." />
-    </ListItem>
-  )}
-</List>
+            <List>
+              {Array.isArray(product.details) ? (
+                product.details.map((detail, index) => (
+                  <ListItem key={index}>
+                    <ListItemText primary={`• ${detail}`} />
+                  </ListItem>
+                ))
+              ) : typeof product.details === 'string' ? (
+                product.details.split('\n').map((detail, index) => (
+                  <ListItem key={index}>
+                    <ListItemText primary={`• ${detail}`} />
+                  </ListItem>
+                ))
+              ) : (
+                <ListItem>
+                  <ListItemText primary="No details available." />
+                </ListItem>
+              )}
+            </List>
             <Box mt={2}>
               <IconButton onClick={() => setOpenDelivery(!openDelivery)}>
                 <AccessTime />
@@ -269,7 +278,7 @@ const ProductDetail = ({ addToCart }) => {
               </IconButton>
             </Box>
             <Box mt={4}>
-              {product.stock == 0 ? (
+              {product.stock === 0 ? (
                 <Button
                   variant="contained"
                   color="error"
@@ -282,53 +291,52 @@ const ProductDetail = ({ addToCart }) => {
                     '&:hover': { backgroundColor: 'gray' },
                     cursor: 'not-allowed',
                   }}
-                
                 >
-                 Out of Stock
+                  Out of Stock
                 </Button>
               ) : (
                 <Button
-                variant="contained"
-                sx={{
-                  ...styles, // Apply the animation styles
-                  borderRadius: '4px',
-                  padding: '10px 20px',
-                  fontSize: '16px',
-                  width: '100%',
-                  color: '#000000', // Initial text color
-                  backgroundColor: '#ffffff', // Initial background color
-                  position: 'relative',
-                  overflow: 'hidden',
-                  border: '1px solid #000000',
-                  textTransform: 'none',
-                  transition: 'color 0.3s ease, background-color 0.3s ease', // Smooth transition
-                  '&::after': {
-                    content: '""',
-                    position: 'absolute',
-                    top: 0,
-                    left: '-100%',
+                  variant="contained"
+                  sx={{
+                    ...styles, // Apply the animation styles
+                    borderRadius: '4px',
+                    padding: '10px 20px',
+                    fontSize: '16px',
                     width: '100%',
-                    height: '100%',
-                    backgroundColor: '#000000',
-                    zIndex: 0,
-                    transition: 'left 0.3s ease',
-                  },
-                  '&:hover': {
-                    color: '#ffffff', // Text color on hover
-                    backgroundColor: '#000000', // Background color on hover
-                    '&::after': {
-                      left: '0%',
-                    },
-                  },
-                  '& span': {
+                    color: '#000000', // Initial text color
+                    backgroundColor: '#ffffff', // Initial background color
                     position: 'relative',
-                    zIndex: 1,
-                  },
-                }}
-                onClick={handleAddToCart}
-              >
-                <span>Add to cart</span>
-              </Button>
+                    overflow: 'hidden',
+                    border: '1px solid #000000',
+                    textTransform: 'none',
+                    transition: 'color 0.3s ease, background-color 0.3s ease', // Smooth transition
+                    '&::after': {
+                      content: '""',
+                      position: 'absolute',
+                      top: 0,
+                      left: '-100%',
+                      width: '100%',
+                      height: '100%',
+                      backgroundColor: '#000000',
+                      zIndex: 0,
+                      transition: 'left 0.3s ease',
+                    },
+                    '&:hover': {
+                      color: '#ffffff', // Text color on hover
+                      backgroundColor: '#000000', // Background color on hover
+                      '&::after': {
+                        left: '0%',
+                      },
+                    },
+                    '& span': {
+                      position: 'relative',
+                      zIndex: 1,
+                    },
+                  }}
+                  onClick={handleAddToCart}
+                >
+                  <span>Add to cart</span>
+                </Button>
               )}
             </Box>
           </Grid>
