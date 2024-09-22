@@ -112,6 +112,31 @@ const productRepository = {
   getProductsSortedByPriceAsc: async () => {
     return await Product.find().sort({ price: 1 });
   },
+  getProductsByTwoTags: async (tags) => {
+    return await Product.aggregate([
+      {
+        $match: {
+          tags: { $all: tags } // Match products containing all provided tags
+        }
+      },
+      {
+        $project: {
+          name: 1,
+          price: 1,
+          tags: 1,
+          productCode: 1,
+          mainImage: 1,
+          secondaryImages: { $slice: ['$secondaryImages', 2] },
+          fabric: 1,
+          color: 1,
+          details: 1,
+          description: 1,
+          stock: 1,
+          createdAt: 1,
+        },
+      },
+    ]);
+  },
 };
 
 module.exports = productRepository;

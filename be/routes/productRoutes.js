@@ -71,4 +71,30 @@ router.get('/products/man/bridal-partywear', productController.getManBridalParty
 // Route for woman bridal and party wear products
 router.get('/products/woman/bridal-partywear', productController.getWomanBridalPartywearProducts);
 router.post('/bulk-upload', upload.single('file'), productController.bulkUploadProducts);
+router.get('/products/tags', productController.getProductsByTwoTags);
+router.get('/products', async (req, res) => {
+    try {
+      const { tag1, tag2 } = req.query; // Extract tags from query parameters
+  
+      // MongoDB aggregation pipeline
+      const products = await Product.aggregate([
+        {
+          $match: {
+            tags: { $all: [tag1, tag2] } // Match products with both tags
+          }
+        },
+        {
+          $addFields: {
+            concatenatedTags: { $concat: ['$tags'] } // Concatenate tags into a string
+          }
+        }
+      ]);
+  
+      res.status(200).json(products);
+    } catch (error) {
+      console.error(error);
+      res.status(500).json({ message: 'Server error' });
+    }
+  });
+  
 module.exports = router;

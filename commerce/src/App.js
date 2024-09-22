@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import Navbar from './components/Navbar';
 import NewIn from './pages/Newin';
-import Homepage from './pages/Homepage';
+
 import All from './pages/All';
 import Footer from './components/Footer';
 import Search from './pages/Search';
@@ -12,6 +12,7 @@ import Checkout from './pages/Checkout';
 import Woman from './pages/Woman';
 import Bridal from './pages/Bridal';
 import Man from './pages/Man';
+
 
 const App = () => {
   const [cartItems, setCartItems] = useState([]);

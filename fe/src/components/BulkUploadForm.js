@@ -15,14 +15,14 @@ const BulkUploadForm = () => {
     formData.append('file', file);
 
     try {
-      const response = await axios.post('/api/products/bulk-upload', formData, {
+      const response = await axios.post('http://localhost:5000/v2/products/bulk-upload', formData, {
         headers: {
           'Content-Type': 'multipart/form-data'
         }
       });
       console.log('Upload successful:', response.data);
     } catch (error) {
-      console.error('Error uploading file:', error);
+      console.error('Error uploading file:', error.response ? error.response.data : error.message);
     }
   };
 

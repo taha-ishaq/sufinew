@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Grid, Card, CardMedia, CardContent, Typography, IconButton, Select, MenuItem, CircularProgress, Box } from '@mui/material';
+import { Grid, Card, CardMedia, CardContent, Typography, useTheme, useMediaQuery, IconButton, Select, MenuItem, CircularProgress, Box } from '@mui/material';
 import { Link } from 'react-router-dom';
 import AddShoppingCartIcon from '@mui/icons-material/AddShoppingCart';
 import axios from 'axios';
@@ -7,13 +7,18 @@ import axios from 'axios';
 const Bridal = ({ addToCart }) => {
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [filterOption, setFilterOption] = useState('');
+  const [filterOption, setFilterOption] = useState('bridal'); // Set default filter
+  const [sortOption, setSortOption] = useState('none');
+  const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
 
   useEffect(() => {
     const fetchProducts = async () => {
       setLoading(true);
+      let tagQuery = filterOption; // Use filter option directly
+
       try {
-        const response = await axios.get(`http://localhost:5000/v2/products/tags?tag=bridal${filterOption ? `,${filterOption}` : ''}`);
+        const response = await axios.get(`http://localhost:5000/v2/products/tags?tag=${tagQuery}`);
         setProducts(response.data);
       } catch (error) {
         console.error('Error fetching products:', error);
@@ -25,20 +30,53 @@ const Bridal = ({ addToCart }) => {
     fetchProducts();
   }, [filterOption]);
 
+  const sortedProducts = () => {
+    let sorted = [...products];
+
+    if (sortOption === 'alphabeticalAsc') {
+      sorted.sort((a, b) => a.name.localeCompare(b.name));
+    } else if (sortOption === 'alphabeticalDesc') {
+      sorted.sort((a, b) => b.name.localeCompare(a.name));
+    } else if (sortOption === 'priceAsc') {
+      sorted.sort((a, b) => a.price - b.price);
+    } else if (sortOption === 'priceDesc') {
+      sorted.sort((a, b) => b.price - a.price);
+    } else if (sortOption === 'newest') {
+      sorted.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+    } else if (sortOption === 'oldest') {
+      sorted.sort((a, b) => new Date(a.createdAt) - new Date(b.createdAt));
+    }
+
+    return sorted;
+  };
+
+  const sortedAndFilteredProducts = sortedProducts();
+
   return (
     <div style={{ padding: '20px', marginTop: '60px' }}>
-      <Box sx={{ mb: 2, display: 'flex', alignItems: 'center' }}>
-        <Typography variant="h5" sx={{ mr: 2 }}>Filter By:</Typography>
+      <Box sx={{ mb: 2, display: 'flex', alignItems: 'center', justifyContent: isMobile ? 'center' : 'end' }}>
         <Select
           value={filterOption}
           onChange={(e) => setFilterOption(e.target.value)}
-          sx={{ minWidth: 120 }}
+          sx={{ height: isMobile ? '40px' : '', fontFamily: 'Georgia, serif', backgroundColor: 'white', color: 'black', '&:hover': { backgroundColor: 'darkgray' } }}
         >
-          <MenuItem value="">All</MenuItem>
-          <MenuItem value="partywearM">Bridal-Partywear (Male)</MenuItem>
-          <MenuItem value="partywearW">Bridal-Partywear (Woman)</MenuItem>
-          <MenuItem value="men">Bridal-Man</MenuItem>
-          <MenuItem value="woman">Bridal-Woman</MenuItem>
+          <MenuItem value="bridal">All</MenuItem>
+          <MenuItem value="partywear">Woman-Formals</MenuItem>
+          <MenuItem value="bridalmen">Men-Formal</MenuItem>
+          <MenuItem value="bridalwoman">Bridal</MenuItem>
+        </Select>
+        <Select
+          value={sortOption}
+          onChange={(e) => setSortOption(e.target.value)}
+          sx={{ height: isMobile ? '40px' : '', fontFamily: 'Georgia, serif', backgroundColor: 'white', color: 'black', '&:hover': { backgroundColor: 'darkgray' } }}
+        >
+          <MenuItem value="none">Sort By</MenuItem>
+          <MenuItem value="alphabeticalAsc">A-Z</MenuItem>
+          <MenuItem value="alphabeticalDesc">Z-A</MenuItem>
+          <MenuItem value="priceAsc">Price Low to High</MenuItem>
+          <MenuItem value="priceDesc">Price High to Low</MenuItem>
+          <MenuItem value="newest">Newest First</MenuItem>
+          <MenuItem value="oldest">Oldest First</MenuItem>
         </Select>
       </Box>
 
@@ -47,13 +85,13 @@ const Bridal = ({ addToCart }) => {
           <CircularProgress />
           <Typography variant="h6" sx={{ ml: 2 }}>Loading Products...</Typography>
         </Box>
-      ) : products.length === 0 ? (
+      ) : sortedAndFilteredProducts.length === 0 ? (
         <Box display="flex" justifyContent="center" alignItems="center" height="60vh">
           <Typography variant="h6">No Products Found</Typography>
         </Box>
       ) : (
         <Grid container spacing={2}>
-          {products.map((product) => (
+          {sortedAndFilteredProducts.map((product) => (
             <Grid item xs={6} sm={4} md={3} key={product._id}>
               <Card
                 variant="outlined"
@@ -71,7 +109,7 @@ const Bridal = ({ addToCart }) => {
               >
                 <CardMedia
                   component="img"
-                  height="200"
+                  height="170"
                   image={product.mainImage}
                   alt={product.name}
                   sx={{ objectFit: 'cover' }}
@@ -91,7 +129,7 @@ const Bridal = ({ addToCart }) => {
                   >
                     <span style={{ flex: 0.7 }}>RS {product.price}</span>
                     <IconButton
-                      onClick={(e) => { e.stopPropagation(); addToCart(product); }}
+                      onClick={() => addToCart(product)}
                       sx={{ color: 'black', flex: 0.3 }}
                     >
                       <AddShoppingCartIcon />

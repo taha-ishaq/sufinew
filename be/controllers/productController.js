@@ -1,6 +1,8 @@
 const productRepository = require('../Repositories/productRepository');
 const cloudinary = require('../cloundinaryConfig');
 const Product = require('../models/productModel');
+const csv = require('csv-parser');
+const { Readable } = require('stream'); // Importing Readable stream to convert buffer to stream 
 
 const productController = {
   // Create a new product
@@ -151,17 +153,19 @@ const productController = {
   },
   getProductsByTwoTags: async (req, res) => {
     try {
-      const { tag1, tag2 } = req.query;
+      const { tag1 = '', tag2 = '' } = req.query; // Default to empty string
       if (!tag1 || !tag2) {
         return res.status(400).json({ message: 'Both tags are required' });
       }
-      const products = await productRepository.getProductsByTags([tag1, tag2]);
+      const products = await productRepository.getProductsByTwoTags({ $or: [{ tags: tag1 }, { tags: tag2 }] });
       res.status(200).json(products);
     } catch (error) {
       console.error(error);
       res.status(500).json({ message: 'Error fetching products', error });
     }
   },
+  
+  
   getProductsByThreeTags: async (req, res) => {
     try {
       const { tag1, tag2 , tag3 } = req.query;
@@ -360,45 +364,77 @@ const productController = {
       res.status(500).json({ message: 'Error fetching products by tags', error });
     }
   },
+ // Assuming your Mongoose Product model is here
+  // Assuming this is your Product model
+ 
   bulkUploadProducts: async (req, res) => {
     try {
-      const results = [];
-      fs.createReadStream(req.file.path)
-        .pipe(csv())
-        .on('data', (data) => results.push(data))
-        .on('end', async () => {
-          const savedProducts = [];
-          for (const productData of results) {
-            const mainImageUrl = productData.mainImage; // Process URL or path
-            const secondaryImageUrls = productData.secondaryImages.split(','); // Split into an array
-            
-            const newProduct = new Product({
-              name: productData.name,
-              description: productData.description,
-              price: parseFloat(productData.price),
-              mainImage: mainImageUrl,
-              secondaryImages: secondaryImageUrls,
-              tags: productData.tags.split(','),
-              details: productData.details,
-              color: productData.color,
-              stock: parseInt(productData.stock),
-              fabric: productData.fabric,
-              size: productData.size,
-              length: parseFloat(productData.length),
-              productCode: productData.productCode // Add productCode here
-            });
+      if (!req.file) {
+        return res.status(400).json({ message: 'No file uploaded' });
+      }
   
-            const savedProduct = await newProduct.save();
-            savedProducts.push(savedProduct);
+      const results = [];
+      const bufferStream = new Readable();
+      bufferStream.push(req.file.buffer);
+      bufferStream.push(null);
+  
+      bufferStream
+        .pipe(csv())
+        .on('data', (data) => {
+          console.log('Received data:', data);
+          results.push(data);
+        })
+        .on('end', async () => {
+          try {
+            const savedProducts = [];
+  
+            for (const productData of results) {
+              // Check required fields
+              if (!productData.name || !productData.price || !productData.productCode || !productData.mainImage || !productData.fabric || !productData.description) {
+                return res.status(400).json({ message: 'Missing required fields', data: productData });
+              }
+  
+              const price = parseFloat(productData.price);
+              if (isNaN(price)) {
+                return res.status(400).json({ message: 'Invalid price value', data: productData });
+              }
+  
+              const newProduct = new Product({
+                name: productData.name,
+                description: productData.description,
+                price: price,
+                mainImage: productData.mainImage,
+                secondaryImages: productData.secondaryImages ? productData.secondaryImages.split(',') : [],
+                tags: productData.tags ? productData.tags.split(',') : [],
+                details: productData.details,
+                color: productData.color,
+                stock: parseInt(productData.stock, 10) || 0,
+                fabric: productData.fabric,
+                size: productData.size ? productData.size.split(',') : [],
+                length: parseFloat(productData.length) || 0,
+                productCode: productData.productCode,
+              });
+  
+              const savedProduct = await newProduct.save();
+              savedProducts.push(savedProduct);
+            }
+  
+            res.status(201).json({ message: 'Products uploaded successfully', products: savedProducts });
+          } catch (saveError) {
+            console.error('Error saving products:', saveError);
+            res.status(500).json({ message: 'Error saving products', error: saveError.message });
           }
-          res.status(201).json({ message: 'Products uploaded successfully', products: savedProducts });
+        })
+        .on('error', (error) => {
+          console.error('Error reading CSV file:', error);
+          res.status(500).json({ message: 'Error processing file', error: error.message });
         });
+  
     } catch (error) {
       console.error('Error in bulkUploadProducts:', error);
       res.status(500).json({ message: 'Internal server error', error: error.message });
     }
-  },
-  
+  }
 
 };
 

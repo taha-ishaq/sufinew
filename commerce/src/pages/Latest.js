@@ -62,7 +62,7 @@ const Latest = () => {
         <Box
           sx={{
             width: isSmallScreen ? '100%' : '30%', // Full width on small screens
-            height: isSmallScreen ? '300px' : '100', // Adjust height for small screens
+            height: isSmallScreen ? '250px' : '100', // Adjust height for small screens
             backgroundImage: `url(${process.env.PUBLIC_URL}/latest1.jpeg)`,
             backgroundSize: 'cover',
             backgroundPosition: isSmallScreen ? 'center' : 'center top',

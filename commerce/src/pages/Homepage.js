@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Box, IconButton, Typography, Button,useTheme,useMediaQuery } from '@mui/material';
+import { Box, IconButton, Typography, Button,useTheme,useMediaQuery} from '@mui/material';
 import { ArrowBack, ArrowForward } from '@mui/icons-material';
 import { useNavigate } from 'react-router-dom';
 
@@ -79,22 +79,26 @@ const Homepage = () => {
           color: 'white',
         }}
       >
-        <Typography sx={{ mb: 2, fontSize: isSmallScreen ? '35px' : '40px',  fontStyle:'lobster'}}>
-        <b>SafiyaKhanum</b>
+        <Typography sx={{ mb: 2, fontSize: isSmallScreen ? '35px' : '50px',  fontStyle:'lobster'}}>
+        <b>Welcome To SafiyaKhanum</b>
         </Typography>
         <Button
+        variant="contained"
           onClick={() => navigate('/collections')}
           sx={{
-            backgroundColor: 'black',
-            color: 'white',
+            
+            backgroundColor: 'white',
+            color: 'black',
             '&:hover': {
-              backgroundColor: '#333',
+              backgroundColor: 'black',
+              color:'white'
             },
             padding: isSmallScreen ? '12px' : '15px',
-            fontSize: isSmallScreen ? '15px' : '35px'
+            fontSize: isSmallScreen ? '15px' : '20px',
+          
           }}
         >
-          Explore More
+          <b>Explore More</b>
         </Button>
       </Box>
       <Box

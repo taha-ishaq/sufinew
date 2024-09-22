@@ -93,9 +93,9 @@ const Footer = () => {
             <FontAwesomeIcon icon={faTiktok} style={{ color: 'white' }} />
           </IconButton>
         </Box>
-        <Box sx={{ marginTop: 2,
+        <Box sx={{ marginTop: 5,
 
-             padding: { xs: 2, sm: 4 },
+            
          }}>
           Contact us at
           <br />
@@ -120,7 +120,7 @@ const Footer = () => {
           </span>
         </Box>
         <Typography variant="body2" sx={{ fontSize: '0.9rem', marginTop: 2 }}>
-          © 2024 - Safiya Khanum | Luxury Womenswear
+          © 2024 - Safiya Khanum | Luxury Womenwear
         </Typography>
       </Box>
 
@@ -148,7 +148,7 @@ const Footer = () => {
           },
         }}
       >
-        <Typography variant="h6">CUSTOMER HUB</Typography>
+        <Typography variant="h7">CUSTOMER HUB</Typography>
         <RouterLink to="/" style={{ color: 'white' }}>HOME</RouterLink>
         <RouterLink to="/privacy" style={{ color: 'white' }}>PRIVACY</RouterLink>
         <RouterLink to="/terms" style={{ color: 'white' }}>TERMS OF USE</RouterLink>

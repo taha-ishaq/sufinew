@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Grid, Card, CardMedia, CardContent, Typography, IconButton, Select, MenuItem, CircularProgress, Box } from '@mui/material';
+import { Grid, Card, CardMedia, CardContent, Typography, IconButton, useTheme, useMediaQuery, Box, CircularProgress, Select, MenuItem } from '@mui/material';
 import { Link } from 'react-router-dom';
 import AddShoppingCartIcon from '@mui/icons-material/AddShoppingCart';
 import axios from 'axios';
@@ -7,14 +7,14 @@ import axios from 'axios';
 const Woman = ({ addToCart }) => {
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [sortOption, setSortOption] = useState('none');
-  const [priceOrder, setPriceOrder] = useState('none');
+  const [category, setCategory] = useState('woman');
+  const [filterOption, setFilterOption] = useState('none');
 
   useEffect(() => {
     const fetchProducts = async () => {
       setLoading(true);
       try {
-        const response = await axios.get(`http://localhost:5000/v2/products/tags?tag=woman${sortOption !== 'none' ? `,${sortOption.toLowerCase()}` : ''}`);
+        const response = await axios.get(`http://localhost:5000/v2/products/tags?tag=${category}`);
         setProducts(response.data);
       } catch (error) {
         console.error('Error fetching products:', error);
@@ -24,54 +24,76 @@ const Woman = ({ addToCart }) => {
     };
 
     fetchProducts();
-  }, [sortOption]);
+  }, [category]);
 
-  // Sort products by price if a priceOrder is selected
-  const sortedProducts = () => {
-    if (priceOrder === 'asc') {
-      return [...products].sort((a, b) => a.price - b.price);
-    } else if (priceOrder === 'desc') {
-      return [...products].sort((a, b) => b.price - a.price);
+  const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
+
+  const sortedFilteredProducts = () => {
+    let filtered = [...products];
+
+    // Filter by price, alphabetical order, or product age
+    if (filterOption === 'asc') {
+      filtered.sort((a, b) => a.price - b.price);
+    } else if (filterOption === 'desc') {
+      filtered.sort((a, b) => b.price - a.price);
+    } else if (filterOption === 'alphabeticalAsc') {
+      filtered.sort((a, b) => a.name.localeCompare(b.name));
+    } else if (filterOption === 'alphabeticalDesc') {
+      filtered.sort((a, b) => b.name.localeCompare(a.name));
+    } else if (filterOption === 'newest') {
+      filtered.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+    } else if (filterOption === 'oldest') {
+      filtered.sort((a, b) => new Date(a.createdAt) - new Date(b.createdAt));
     }
-    return products;
+
+    return filtered;
   };
 
   return (
     <div style={{ padding: '20px', marginTop: '60px' }}>
-     <Box sx={{ mb: 2, display: 'flex', flexDirection: { xs: 'column', sm: 'row' }, alignItems: 'center' }}>
-  <Typography variant="h5" sx={{ mr: { xs: 0, sm: 2 }, mb: { xs: 1, sm: 0 } }}>Sort By:</Typography>
-  <Select
-    value={sortOption}
-    onChange={(e) => setSortOption(e.target.value)}
-    sx={{ minWidth: { xs: '100%', sm: 120 }, mr: { sm: 2 }, mb: { xs: 1, sm: 0 } }}
-  >
-    <MenuItem value="none">None</MenuItem>
-    <MenuItem value="stitch">Stitch</MenuItem>
-    <MenuItem value="unstitch">Unstitch</MenuItem>
-  </Select>
-  <Select
-    value={priceOrder}
-    onChange={(e) => setPriceOrder(e.target.value)}
-    sx={{ minWidth: { xs: '100%', sm: 120 } }}
-  >
-    <MenuItem value="none">Sort by Price</MenuItem>
-    <MenuItem value="asc">Lowest First</MenuItem>
-    <MenuItem value="desc">Highest First</MenuItem>
-  </Select>
-</Box>
+      <Box sx={{ mb: 2, display: 'flex', flexDirection: { xs: 'column', sm: 'row' }, alignItems: 'center' , justifyContent:isMobile ? 'center': 'end' }}>
+        <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 2 }}>
+          {/* Category Select */}
+          <Select
+            value={category}
+            onChange={(e) => setCategory(e.target.value)}
+            sx={{ height: isMobile ? '40px' : '', fontFamily: 'Georgia, serif', backgroundColor: 'white', color: 'black', '&:hover': { backgroundColor: 'darkgray' } }}
+          >
+            <MenuItem value="woman">All</MenuItem>
+            <MenuItem value="femalestitch">Stitch</MenuItem>
+            <MenuItem value="femaleunstitch">Unstitch</MenuItem>
+          </Select>
+
+          {/* Filter Select */}
+          <Select
+            value={filterOption}
+            onChange={(e) => setFilterOption(e.target.value)}
+            sx={{ height: isMobile ? '40px' : '', fontFamily: 'Georgia, serif', backgroundColor: 'white', color: 'black', '&:hover': { backgroundColor: 'darkgray' } }}
+          >
+            <MenuItem value="none">Sort by Price</MenuItem>
+            <MenuItem value="asc">Low-High</MenuItem>
+            <MenuItem value="desc">High-Low</MenuItem>
+            <MenuItem value="alphabeticalAsc">A-Z</MenuItem>
+            <MenuItem value="alphabeticalDesc">Z-A</MenuItem>
+            <MenuItem value="newest">Newest</MenuItem>
+            <MenuItem value="oldest">Oldest</MenuItem>
+          </Select>
+        </Box>
+      </Box>
 
       {loading ? (
         <Box display="flex" justifyContent="center" alignItems="center" height="60vh">
           <CircularProgress />
           <Typography variant="h6" sx={{ ml: 2 }}>Loading Products...</Typography>
         </Box>
-      ) : sortedProducts().length === 0 ? (
+      ) : sortedFilteredProducts().length === 0 ? (
         <Box display="flex" justifyContent="center" alignItems="center" height="60vh">
           <Typography variant="h6">No Products Found</Typography>
         </Box>
       ) : (
         <Grid container spacing={2}>
-          {sortedProducts().map((product) => (
+          {sortedFilteredProducts().map((product) => (
             <Grid item xs={6} sm={4} md={3} key={product._id}>
               <Card
                 variant="outlined"
@@ -85,7 +107,6 @@ const Woman = ({ addToCart }) => {
                 }}
                 component={Link}
                 to={`/product/${product._id}`}
-                sx={{ textDecoration: 'none' }}
               >
                 <CardMedia
                   component="img"
@@ -109,7 +130,7 @@ const Woman = ({ addToCart }) => {
                   >
                     <span style={{ flex: 0.7 }}>RS {product.price}</span>
                     <IconButton
-                      onClick={(e) => { e.stopPropagation(); addToCart(product); }}
+                      onClick={() => addToCart(product)}
                       sx={{ color: 'black', flex: 0.3 }}
                     >
                       <AddShoppingCartIcon />

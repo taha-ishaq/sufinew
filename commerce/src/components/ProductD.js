@@ -1,9 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import axios from 'axios';
-import { Box, Typography, Grid, Button, IconButton, Collapse, List, ListItem, ListItemText } from '@mui/material';
+import { Box, Typography, Grid, Button,useMediaQuery,useTheme, IconButton,Dialog, DialogContent, Collapse, List, ListItem, ListItemText } from '@mui/material';
 import { ArrowBack, AccessTime, CreditCard, Add, Remove } from '@mui/icons-material';
 import Navbar from '../components/Navbar';
+import { Swiper, SwiperSlide } from 'swiper/react';
+import { Link } from 'react-router-dom';
+import 'swiper/swiper-bundle.css'; // Add Swiper styles
 
 const ProductDetail = ({ addToCart }) => {
   const { id } = useParams();
@@ -11,10 +14,12 @@ const ProductDetail = ({ addToCart }) => {
   const [selectedImage, setSelectedImage] = useState(null);
   const [openDelivery, setOpenDelivery] = useState(false);
   const [openPayment, setOpenPayment] = useState(false);
+  const [openDialog, setOpenDialog] = useState(false);
   const [quantity, setQuantity] = useState(1);
   const [option, setOption] = useState('unstitched');
   const [size, setSize] = useState('');
   const [relatedProducts, setRelatedProducts] = useState([]);
+  const [chart, setChart]=useState(false);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -30,11 +35,33 @@ const ProductDetail = ({ addToCart }) => {
 
     fetchProduct();
   }, [id]);
+  useEffect(() => {
+    const fetchRelatedProducts = async () => {
+      try {
+        const response = await axios.get(`http://localhost:5000/v2/products`); // Adjust the API endpoint
+        setRelatedProducts(response.data);
+      } catch (error) {
+        console.error('Error fetching related products:', error);
+      }
+    };
+  
+    if (product) {
+      fetchRelatedProducts();
+    }
+  }, [product]);
+  
+  const handleImageClick = () => {
+    setOpenDialog(true);
+  };
 
+  const handleCloseDialog = () => {
+    setOpenDialog(false);
+  };
   const handleQuantityChange = (change) => {
     setQuantity(prev => Math.max(prev + change, 1));
   };
-
+  const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
   const handleAddToCart = () => {
     if (product.stock === 0) {
       console.log('Product is out of stock');
@@ -92,7 +119,7 @@ const ProductDetail = ({ addToCart }) => {
       <Box sx={{ padding: 4 }}>
         <Navbar />
       </Box>
-      <Box sx={{ marginTop: '100px', paddingTop: '20px', paddingX: 4 }}>
+      <Box sx={{ marginTop: '10px', paddingTop: '20px', paddingX: 4,marginBottom:'20px' }}>
         <IconButton onClick={() => navigate(-1)} sx={{ marginBottom: 2 }}>
           <ArrowBack /> Back
         </IconButton>
@@ -106,17 +133,18 @@ const ProductDetail = ({ addToCart }) => {
             <Grid container spacing={1} mt={2}>
               {product.secondaryImages && product.secondaryImages.length > 0 ? (
                 product.secondaryImages.map((img, index) => (
-                  <Grid item xs={6} key={index} style={{ padding: '0' }}>
+                  <Grid item xs={3} key={index} style={{ padding: '0' }}>
                     <img
                       src={img}
                       alt={`Secondary ${index}`}
                       style={{
                         width: '100%',
-                        height: '100%', // Make height equal to width for square shape
+                        height: isMobile ? '100px' : '200px', // Make height equal to width for square shape
                         borderRadius: '8px',
                         objectFit: 'cover', // Maintain aspect ratio and cover the area
                         aspectRatio: '1/1', // Keep a square aspect ratio
                         cursor: 'pointer',
+                        border:'5px solid white'
                       }}
                       onClick={() => setSelectedImage(img)}
                     />
@@ -234,6 +262,26 @@ const ProductDetail = ({ addToCart }) => {
                   Stitched
                 </Button>
               </Box>
+              <Button
+                  variant={option === 'stitched' ? 'contained' : 'outlined'}
+                  sx={{
+                    borderColor: '#000000',
+                    color: option === 'stitched' ? '#ffffff' : '#000000',
+                    backgroundColor: option === 'stitched' ? '#000000' : 'transparent',
+                    borderRadius: '4px',
+                    borderWidth: '1px',
+                    padding: '8px 16px',
+                    marginLeft: isMobile ? '60px' : '',
+                    marginTop: isMobile ? '20px' : '50px',
+                    '&:hover': {
+                      backgroundColor: option === 'stitched' ? '#000000' : '#f0f0f0',
+                      color: option === 'stitched' ? '#ffffff' : '#000000',
+                    },
+                  }}
+                  onClick={()=>{setChart(!chart)}}
+                >
+                  Size Chart
+                </Button>
             </Box>
 
             {option === 'stitched' && (
@@ -341,6 +389,66 @@ const ProductDetail = ({ addToCart }) => {
             </Box>
           </Grid>
         </Grid>
+        <Box mt={4} sx={{ display: 'flex', alignItems: 'center', justifyContent: isMobile ? 'center' : 'center' }}>
+      {chart ? (
+        <img
+          src={`${process.env.PUBLIC_URL}/sizeChart.jpeg`} // Corrected syntax for src
+          alt="Size Chart"
+          style={{ width: isMobile ? '100%' : '60%', borderRadius: '8px', objectFit: 'cover', height: isMobile ? '250px' : '100%' }}
+          onClick={handleImageClick} // Open dialog on click
+        />
+      ) : (
+        <Box>
+        
+        </Box>
+      )}
+
+      <Dialog open={openDialog} onClose={handleCloseDialog}>
+        <DialogContent>
+          <img
+            src={`${process.env.PUBLIC_URL}/sizeChart.jpeg`} // Same image in dialog
+            alt="Size Chart"
+            style={{ width: '100%', borderRadius: '8px', objectFit: 'cover' }}
+          />
+        </DialogContent>
+      </Dialog>
+    </Box>
+
+    <Box mt={4}>
+  <Typography variant="h5" sx={{ fontWeight: 'bold',marginBottom: '20px' ,marginTop:'50px' }}>Related Products</Typography>
+  <Swiper
+    slidesPerView={2} // Adjust this for larger screens
+    spaceBetween={20}
+    breakpoints={{
+      640: {
+        slidesPerView: 2,
+      },
+      768: {
+        slidesPerView: 3,
+      },
+      1024: {
+        slidesPerView: 4,
+      },
+    }}
+  >
+    {relatedProducts.map((relatedProduct) => (
+      <SwiperSlide key={relatedProduct._id}>
+        <Link to="/collections" style={{ textDecoration: 'none', color: 'inherit' }}>
+          <Box>
+            <img
+              src={relatedProduct.mainImage}
+              alt={relatedProduct.name}
+              style={{ width: '100%', borderRadius: '8px', height: '200px', objectFit: 'cover' }}
+            />
+            <Typography variant="h6">{relatedProduct.name}</Typography>
+            <Typography variant="body2">PKR. {relatedProduct.price}</Typography>
+            <Button onClick={(e) => { e.stopPropagation(); addToCart(relatedProduct); }}>Add to Cart</Button>
+          </Box>
+        </Link>
+      </SwiperSlide>
+    ))}
+  </Swiper>
+</Box>
       </Box>
     </>
   );

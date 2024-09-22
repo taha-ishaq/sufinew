@@ -5,6 +5,7 @@ import Arrivals from './Arrivals'
 import Featured from './Featured'
 import AboutUs from './Aboutus'
 import SuccessStories from './Success'
+import SocialMedia from './SocialMedia'
 
 const All = () => {
   return (
@@ -13,7 +14,6 @@ const All = () => {
         <Latest/>
         <Arrivals/>
         <Featured/>
-        <AboutUs/>
         <SuccessStories/>
     </div>
   )

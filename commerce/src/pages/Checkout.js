@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import { Box, TextField, Typography, Button, Grid, Snackbar, Alert, Card, CardMedia, CardContent } from '@mui/material';
+import { Box, TextField, Typography, Button, Grid, Snackbar, Alert, Card, CardMedia, CardContent,useTheme,useMediaQuery } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
 import Navbar from '../components/Navbar';
 
@@ -20,7 +20,8 @@ const Checkout = () => {
   const [success, setSuccess] = useState(false);
 
   const navigate = useNavigate();
-
+  const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
   useEffect(() => {
     const fetchCartItems = () => {
       const savedCartItems = JSON.parse(localStorage.getItem('cartItems')) || [];
@@ -41,7 +42,9 @@ const Checkout = () => {
     updatedCartItems[index][name] = value;
     setCartItems(updatedCartItems);
   };
-
+  const calculateTotal = () => {
+    return cartItems.reduce((total, item) => total + (item.price * item.quantity), 0).toFixed(2);
+  };
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
@@ -85,7 +88,7 @@ const Checkout = () => {
         </Box>
       )}
 
-      <Box sx={{ marginTop: '150px', paddingTop: '20px' }}>
+      <Box sx={{ marginTop: '60px', paddingTop: '20px' }}>
         <Typography variant="h4" gutterBottom>Checkout</Typography>
         <form onSubmit={handleSubmit}>
           <Grid container spacing={3}>
@@ -206,11 +209,11 @@ const Checkout = () => {
             )}
           </Box>
           
-          <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2, mt: 4 }}>
-            <Button type="submit" variant="contained" color="primary" sx={{ mb: 2 }}>
-              Place Order
+          <Box sx={{ mb: 2, display: 'flex', alignItems: 'center',justifyContent:'center',gap:1,flexDirection:'column',marginBottom:'70px' }}>
+            <Button type="submit" color="primary" sx={{ fontFamily: 'Georgia, serif', backgroundColor: 'white',marginTop:'20px',border:'1px solid black',width:'90%',height:isMobile ? '50px' : '60px', color: 'black', '&:hover': {  backgroundColor: 'black', color:'white'} }}>
+              Place Order:{calculateTotal}
             </Button>
-            <Button type="button" variant="contained" color="primary" onClick={() => navigate('/')}>
+            <Button type="button" variant="contained" color="primary" onClick={() => navigate('/')} sx={{height:isMobile ? '50px' : '60px',border:'1px solid black', fontFamily: 'Georgia, serif',width:'90%', backgroundColor: 'white', color: 'black', '&:hover': { backgroundColor: 'black', color:'white' } }}>
               Continue Shopping
             </Button>
           </Box>

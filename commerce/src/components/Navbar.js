@@ -30,9 +30,9 @@ const Navbar = ({ cartItemsCount }) => {
     setAnchorEl(null);
   };
 
-  const handleTagClick = (tag) => {
+  const handleCategoryClick = (category) => {
     handleMenuClose();
-    window.location.href = `/collections?tag=${tag}`;
+    window.location.href = `/${category}`; // Navigate to the selected category
   };
 
   useEffect(() => {
@@ -61,7 +61,7 @@ const Navbar = ({ cartItemsCount }) => {
           </Box>
 
           <Box>
-            <IconButton component={Link} sx={{ color: scrolling ? 'white' : 'black' }}>
+            <IconButton onClick={handleMenuClick} sx={{ color: scrolling ? 'white' : 'black' }}>
               <SearchIcon />
             </IconButton>
             <IconButton component={Link} to="/cart" sx={{ color: scrolling ? 'white' : 'black' }}>
@@ -72,6 +72,13 @@ const Navbar = ({ cartItemsCount }) => {
           </Box>
         </Toolbar>
       </AppBar>
+
+      <Menu anchorEl={anchorEl} open={Boolean(anchorEl)} onClose={handleMenuClose}>
+        <MenuItem onClick={() => handleCategoryClick('woman')}>Women</MenuItem>
+        <MenuItem onClick={() => handleCategoryClick('man')}>Men</MenuItem>
+        <MenuItem onClick={() => handleCategoryClick('collections')}>Collection</MenuItem>
+        <MenuItem onClick={() => handleCategoryClick('wedding-formals')}>Wedding Formals</MenuItem>
+      </Menu>
 
       <Drawer anchor="left" open={drawerOpen} onClose={handleDrawerClose}>
         <Box sx={{ width: 250 }} role="presentation" onClick={handleDrawerClose} onKeyDown={handleDrawerClose}>

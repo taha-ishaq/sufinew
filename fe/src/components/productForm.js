@@ -24,12 +24,15 @@ const validTags = [
   'femalestitch',
   'maleunstitch',
   'femaleunstitch',
-  'partywearm',
-  'partywearw',
+  'partywear',
+  'bridalmen',
+  'bridalwoman',
 ];
+
 
 const ProductForm = () => {
   const [error, setError] = useState('');
+  const [productType, setProductType] = useState(''); // New state for product type
   const [formData, setFormData] = useState({
     name: '',
     price: '',
@@ -73,6 +76,12 @@ const ProductForm = () => {
     }
   };
 
+  const handleProductTypeChange = (e) => {
+    const value = e.target.value;
+    setProductType(value); // Update the product type state
+    handleChange(e); // Call the existing handleChange to update formData
+  };
+
   const handleDetailChange = (index, value) => {
     const details = [...formData.details];
     details[index] = value;
@@ -92,7 +101,7 @@ const ProductForm = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     const form = new FormData();
-
+  
     for (const key in formData) {
       if (Array.isArray(formData[key])) {
         formData[key].forEach((item) => form.append(key, item));
@@ -100,7 +109,7 @@ const ProductForm = () => {
         form.append(key, formData[key]);
       }
     }
-
+  
     try {
       const response = await axios.post('http://localhost:5000/v2/products/', form, {
         headers: {
@@ -108,6 +117,7 @@ const ProductForm = () => {
         },
       });
       console.log('Product created:', response.data);
+      
       // Reset form data
       setFormData({
         name: '',
@@ -124,7 +134,11 @@ const ProductForm = () => {
         stock: '',
         productCode: '',
       });
-      setError('');
+      setProductType(''); // Reset product type
+      setError(''); // Clear error message
+  
+      // Refresh the page
+      window.location.reload(); // This will refresh the entire page
     } catch (error) {
       console.error('Error during submission:', error);
       if (error.response) {
@@ -134,7 +148,6 @@ const ProductForm = () => {
       }
     }
   };
-
   return (
     <Box component="form" onSubmit={handleSubmit} sx={{ padding: 2 }}>
       <Typography variant="h4" gutterBottom>Create Product</Typography>
@@ -144,7 +157,7 @@ const ProductForm = () => {
         <Grid item xs={12} sm={6}>
           <FormControl fullWidth required>
             <InputLabel>Product Type</InputLabel>
-            <Select name="productType" onChange={handleChange} required>
+            <Select name="productType" onChange={handleProductTypeChange} required>
               <MenuItem value="woman">Woman</MenuItem>
               <MenuItem value="man">Man</MenuItem>
               <MenuItem value="bridal">Bridal</MenuItem>
@@ -172,7 +185,7 @@ const ProductForm = () => {
             value={formData.tags.join(', ')}
             required
             fullWidth
-            helperText={`Valid tags: ${validTags.join(', ')}`}
+            helperText={`Valid tags: ${validTags.join(', ')}${productType === 'bridal' ? ' (Include "bridalmale" or "bridalfemale" with "bridal" to fetch right data.)' : ''}`}
           />
         </Grid>
 
