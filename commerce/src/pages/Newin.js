@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Grid, Card, CardMedia, CardContent, Select, Typography, useTheme, useMediaQuery, IconButton, Box, MenuItem } from '@mui/material';
+import { Grid, Card, CardMedia, CardContent, Select, Typography, useTheme, useMediaQuery, IconButton,CircularProgress, Box, MenuItem } from '@mui/material';
 import { Link } from 'react-router-dom';
 import AddShoppingCartIcon from '@mui/icons-material/AddShoppingCart';
 import axios from 'axios';
@@ -7,6 +7,7 @@ import axios from 'axios';
 const NewIn = ({ addToCart }) => {
   const [products, setProducts] = useState([]);
   const [filterOption, setFilterOption] = useState('none');
+  const [loading, setLoading] = useState(true);
   const [sortOption, setSortOption] = useState('none');
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
@@ -78,7 +79,16 @@ const NewIn = ({ addToCart }) => {
           <MenuItem value="oldest">Oldest First</MenuItem>
         </Select>
       </Box>
-
+      {loading ? (
+        <Box display="flex" justifyContent="center" alignItems="center" height="60vh">
+          <CircularProgress />
+          <Typography variant="h6" sx={{ ml: 2 }}>Loading Products...</Typography>
+        </Box>
+      ) : sortedAndFilteredProducts.length === 0 ? (
+        <Box display="flex" justifyContent="center" alignItems="center" height="60vh">
+          <Typography variant="h6">No Products Found</Typography>
+        </Box>
+      ) :(
       <Grid container spacing={2}>
         {getFilteredAndSortedProducts().map((product) => (
           <Grid item xs={6} sm={4} md={3} key={product._id}>
@@ -129,6 +139,7 @@ const NewIn = ({ addToCart }) => {
           </Grid>
         ))}
       </Grid>
+    )} 
     </div>
   );
 };
