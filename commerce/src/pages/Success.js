@@ -22,18 +22,18 @@ const SuccessStories = () => {
 
   const successStories = [
     {
-      image: "brand.jpeg",
-      role: "Brand Director",
-      name: "Aamir Ismatullah Ch.",
-      message:
-        "Our journey is rooted in tradition, and each piece tells a story of culture and craftsmanship.",
-    },
-    {
-      image: "ceo.jpeg",
+      image: "ceo2.jpeg",
       role: "CEO",
       name: "Saima Azhar",
       message:
         "We believe in empowering artists and bringing their timeless skills to the world",
+    },
+    {
+      image: "dire2.jpeg",
+      role: "Brand Director",
+      name: "Aamir Ismatullah Ch.",
+      message:
+        "Our journey is rooted in tradition, and each piece tells a story of culture and craftsmanship.",
     },
     {
       image: "success2.jpeg",
