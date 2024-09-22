@@ -14,7 +14,7 @@ const NewIn = ({ addToCart }) => {
   useEffect(() => {
     const fetchProducts = async () => {
       try {
-        const response = await axios.get('http://localhost:5000/v2/products/');
+        const response = await axios.get('https://sufilatestbe.vercel.app/v2/products/');
         setProducts(response.data);
       } catch (error) {
         console.error('Error fetching products:', error);

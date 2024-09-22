@@ -10,7 +10,7 @@ const ProductManagement = () => {
   useEffect(() => {
     const fetchProducts = async () => {
       try {
-        const response = await axios.get('http://localhost:5000/v2/products/');
+        const response = await axios.get('https://sufilatestbe.vercel.app/v2/products/');
         setProducts(response.data);
       } catch (err) {
         setError('Failed to load products.');
@@ -25,7 +25,7 @@ const ProductManagement = () => {
 
   const handleDelete = async (id) => {
     try {
-      await axios.delete(`http://localhost:5000/v2/products/${id}`);
+      await axios.delete(`https://sufilatestbe.vercel.app/v2/products/${id}`);
       setProducts(products.filter(product => product._id !== id));
     } catch (err) {
       setError('Failed to delete product.');

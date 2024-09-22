@@ -15,7 +15,7 @@ const Dashboard = () => {
 
   const fetchOrdersData = async () => {
     try {
-      const response = await axios.get('http://localhost:5000/v2/checkout');
+      const response = await axios.get('https://sufilatestbe.vercel.app/v2/checkout');
       const orders = response.data;
 
       // Calculate Orders

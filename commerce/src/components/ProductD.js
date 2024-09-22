@@ -25,7 +25,7 @@ const ProductDetail = ({ addToCart }) => {
   useEffect(() => {
     const fetchProduct = async () => {
       try {
-        const response = await axios.get(`http://localhost:5000/v2/products/${id}`);
+        const response = await axios.get(`https://sufilatestbe.vercel.app/v2/products/${id}`);
         console.log('Fetched product:', response.data); // Log product data
         setProduct(response.data);
       } catch (error) {
@@ -38,7 +38,7 @@ const ProductDetail = ({ addToCart }) => {
   useEffect(() => {
     const fetchRelatedProducts = async () => {
       try {
-        const response = await axios.get(`http://localhost:5000/v2/products`); // Adjust the API endpoint
+        const response = await axios.get(`https://sufilatestbe.vercel.app/v2/products`); // Adjust the API endpoint
         setRelatedProducts(response.data);
       } catch (error) {
         console.error('Error fetching related products:', error);

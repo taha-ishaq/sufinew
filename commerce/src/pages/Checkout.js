@@ -59,7 +59,7 @@ const Checkout = () => {
   
       console.log('Submit Data:', { ...formData, products: formattedCartItems });
   
-      await axios.post('http://localhost:5000/v2/checkout', { ...formData, products: formattedCartItems });
+      await axios.post('https://sufilatestbe.vercel.app/v2/checkout', { ...formData, products: formattedCartItems });
       setSuccess(true);
       localStorage.removeItem('cartItems'); // Clear cart items after successful checkout
     } catch (err) {

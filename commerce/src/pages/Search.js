@@ -11,7 +11,7 @@ const Search = () => {
 
   const handleSearch = async () => {
     try {
-      const response = await axios.get(`http://localhost:5000/v2/products/${productCode}`);
+      const response = await axios.get(`https://sufilatestbe.vercel.app/v2/products/${productCode}`);
       setError('');
       // Redirect to the product details page
       navigate(`/product-detail/${response.data._id}`);

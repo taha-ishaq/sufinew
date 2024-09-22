@@ -111,7 +111,7 @@ const ProductForm = () => {
     }
   
     try {
-      const response = await axios.post('http://localhost:5000/v2/products/', form, {
+      const response = await axios.post('https://sufilatestbe.vercel.app/v2/products/', form, {
         headers: {
           'Content-Type': 'multipart/form-data',
         },

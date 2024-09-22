@@ -20,7 +20,7 @@ const OrdersPage = () => {
   useEffect(() => {
     const fetchOrders = async () => {
       try {
-        const response = await axios.get('http://localhost:5000/v2/checkout');
+        const response = await axios.get('https://sufilatestbe.vercel.app/v2/checkout');
         setOrders(response.data.map(order => ({ ...order, status: 'pending' })));
       } catch (error) {
         console.error('Error fetching orders:', error);
@@ -36,7 +36,7 @@ const OrdersPage = () => {
   const handleDelete = async (orderId) => {
     if (window.confirm('Are you sure you want to delete this order?')) {
       try {
-        await axios.delete(`http://localhost:5000/v2/checkout/${orderId}`);
+        await axios.delete(`https://sufilatestbe.vercel.app/v2/checkout/${orderId}`);
         setOrders(orders.filter(order => order._id !== orderId)); // Update UI
       } catch (error) {
         console.error('Error deleting order:', error);

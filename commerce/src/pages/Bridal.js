@@ -18,7 +18,7 @@ const Bridal = ({ addToCart }) => {
       let tagQuery = filterOption; // Use filter option directly
 
       try {
-        const response = await axios.get(`http://localhost:5000/v2/products/tags?tag=${tagQuery}`);
+        const response = await axios.get(`https://sufilatestbe.vercel.app/v2/products/tags?tag=${tagQuery}`);
         setProducts(response.data);
       } catch (error) {
         console.error('Error fetching products:', error);

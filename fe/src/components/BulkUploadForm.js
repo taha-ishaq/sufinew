@@ -15,7 +15,7 @@ const BulkUploadForm = () => {
     formData.append('file', file);
 
     try {
-      const response = await axios.post('http://localhost:5000/v2/products/bulk-upload', formData, {
+      const response = await axios.post('https://sufilatestbe.vercel.app/v2/products/bulk-upload', formData, {
         headers: {
           'Content-Type': 'multipart/form-data'
         }
