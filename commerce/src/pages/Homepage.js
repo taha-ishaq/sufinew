@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { Box, IconButton, Typography, Button,useTheme,useMediaQuery} from '@mui/material';
 import { ArrowBack, ArrowForward } from '@mui/icons-material';
 import { useNavigate } from 'react-router-dom';
+import { LazyLoadImage } from 'react-lazy-load-image-component';
 
 const images = [
   { src: `${process.env.PUBLIC_URL}/banner1.jpeg`, alt: 'Banner 1' },
@@ -33,7 +34,7 @@ const Homepage = () => {
 
   return (
     <Box sx={{ position: 'relative', maxWidth: '100%', overflow: 'hidden', height: '500px' }}>
-      <img
+         <LazyLoadImage
         src={images[currentIndex].src}
         alt={images[currentIndex].alt}
         style={{
