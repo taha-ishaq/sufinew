@@ -42,7 +42,7 @@ const Arrivals = () => {
     dots: true,
     infinite: true,
     speed: 500,
-    slidesToShow: isSmallScreen ? 1 : isLargeScreen ? 2 : 4,
+    slidesToShow: isSmallScreen ? 1 : isLargeScreen ? 3 : 4, // Adjusted to show only 1 on small screens
     slidesToScroll: 1,
     arrows: false,
   };
@@ -58,8 +58,7 @@ const Arrivals = () => {
   return (
     <Box sx={{ textAlign: 'center', padding: '20px' }}>
       <Typography
-     
-        sx={{ fontFamily: 'Arial, sans-serif', fontWeight: 'bold', marginBottom: '20px' , fontSize:isSmallScreen ? '20px' : '45px' }}
+        sx={{ fontFamily: 'Arial, sans-serif', fontWeight: 'bold', marginBottom: '20px', fontSize:isSmallScreen ? '20px' : '45px' }}
       >
         Explore Our Latest Arrivals
       </Typography>
@@ -92,9 +91,9 @@ const Arrivals = () => {
 
         <Slider {...settings} ref={(slider) => (sliderRef = slider)}>
           {productImages[selectedTag].map((product) => (
-            <Box key={product.id} sx={{ padding: isSmallScreen ? '0 10px' : '0 15px' }}>
+            <Box key={product.id} sx={{ padding: isSmallScreen ? '0 0px' : '0 15px' }}> {/* Remove padding on small screens */}
               <Link to="/collections" style={{ textDecoration: 'none' }}> {/* Wrap Card in Link */}
-                <Card sx={{ borderRadius: '8px', overflow: 'hidden', width: '100%', height: '100%',border:'10px solid white' }}>
+                <Card sx={{ borderRadius: '8px', overflow: 'hidden', width: '100%', height: '100%', border:'10px solid white' }}>
                   <CardMedia
                     component="img"
                     image={product.src}
